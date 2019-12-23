@@ -1,0 +1,9 @@
+{
+    "arrowParens": "always",
+    "endOfLine": "lf",
+    "htmlWhitespaceSensitivity": "ignore",
+    "jsxBracketSameLine": true,
+    "semi": false,
+    "tabWidth": 4,
+    "trailingComma": "es5"
+}
