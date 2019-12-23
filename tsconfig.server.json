@@ -2,11 +2,12 @@
     "compilerOptions": {
         "outDir": "./dist/",
         "noImplicitAny": true,
-        "module": "commonjs",
+        "module": "es2015",
         "target": "es5",
         "allowSyntheticDefaultImports": true,
         "lib": ["es2017"],
-        "types": ["node", "express"]
+        "types": ["node", "express"],
+        "noUnusedLocals": true
     },
     "include": ["src/server/**/*"],
     "exclude": ["node_modules"]
