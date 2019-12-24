@@ -8,7 +8,8 @@
         "allowSyntheticDefaultImports": true,
         "allowJs": true,
         "lib": ["es2015", "dom"],
-        "noUnusedLocals": true
+        "noUnusedLocals": true,
+        "strictNullChecks": true
     },
     "include": ["src/client/**/*"],
     "exclude": ["node_modules"]

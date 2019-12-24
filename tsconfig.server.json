@@ -7,7 +7,8 @@
         "allowSyntheticDefaultImports": true,
         "lib": ["es2017"],
         "types": ["node", "express"],
-        "noUnusedLocals": true
+        "noUnusedLocals": true,
+        "strictNullChecks": true
     },
     "include": ["src/server/**/*"],
     "exclude": ["node_modules"]
