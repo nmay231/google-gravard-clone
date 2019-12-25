@@ -1,7 +1,7 @@
-import express from 'express'
-import morgan from 'morgan'
-import helmet from 'helmet'
-import compression from 'compression'
+import * as express from 'express'
+import * as morgan from 'morgan'
+import * as helmet from 'helmet'
+import * as compression from 'compression'
 
 import apiRouter from './routes'
 

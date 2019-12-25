@@ -1,20 +1,13 @@
-import path from 'path'
-import fs from 'fs'
+import * as knex from 'knex'
+import { env } from '../../utils'
 
-interface Killed {
-    dateClose: string
-    dateOpen: string
-    description: string
-    link: string
-    name: string
-    type: 'service' | 'app' | 'hardware'
-    slug: string
-}
-
-export const loadJSON = () =>
-    JSON.parse(
-        fs.readFileSync(path.resolve(__dirname, '../graveyard.json')).toString()
-    ) as Killed[]
+export const knextion = knex({
+    client: 'sqlite3',
+    connection: {
+        filename: env.DB_LOCATION,
+    },
+    useNullAsDefault: true,
+})
 
 const methods: Record<string, (k1: Killed, k2: Killed) => number> = {
     born: (k1, k2) => k1.dateOpen.localeCompare(k2.dateOpen),

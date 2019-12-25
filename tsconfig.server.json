@@ -2,14 +2,18 @@
     "compilerOptions": {
         "outDir": "./dist/",
         "noImplicitAny": true,
-        "module": "es2015",
+        "module": "commonjs",
         "target": "es5",
         "allowSyntheticDefaultImports": true,
+        "inlineSourceMap": true,
+        "jsx": "react",
+        "strict": true,
         "lib": ["es2017"],
         "types": ["node", "express"],
         "noUnusedLocals": true,
         "strictNullChecks": true
     },
     "include": ["src/server/**/*"],
-    "exclude": ["node_modules"]
+    "exclude": ["node_modules"],
+    "files": ["src/globals.d.ts"]
 }

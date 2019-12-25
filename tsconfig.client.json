@@ -2,7 +2,7 @@
     "compilerOptions": {
         "outDir": "./public/js/",
         "noImplicitAny": true,
-        "module": "es6",
+        "module": "es2015",
         "target": "es5",
         "jsx": "react",
         "allowSyntheticDefaultImports": true,
@@ -12,5 +12,6 @@
         "strictNullChecks": true
     },
     "include": ["src/client/**/*"],
-    "exclude": ["node_modules"]
+    "exclude": ["node_modules"],
+    "files": ["src/globals.d.ts"]
 }
