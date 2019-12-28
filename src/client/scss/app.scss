@@ -1,5 +1,54 @@
-$theme-colors: (
-    "primary": #0091ea //Covalence Blue!  :D,,
-);
+@import '~bootstrap';
 
-@import "../../../node_modules/bootstrap/scss/bootstrap.scss";
+[type='radio'] {
+    display: none;
+}
+
+.arrow,
+.arrow-up,
+.arrow-down,
+.empty-arrow {
+    height: 0;
+    width: 0;
+    border-left: 7px solid transparent;
+    border-right: 7px solid transparent;
+    border-bottom: 20px solid black;
+}
+
+.empty-arrow {
+    border-bottom-color: transparent;
+}
+
+.arrow-up {
+    animation: ArrowUp 400ms;
+    border-bottom: 20px solid black;
+    transform: rotateX(0deg);
+}
+
+.arrow-down {
+    animation: ArrowDown 400ms;
+    border-bottom: 20px solid black;
+    transform: rotateX(180deg);
+}
+
+@keyframes ArrowUp {
+    0% {
+        border-bottom: 20px solid black;
+        transform: rotateX(180deg);
+    }
+    100% {
+        border-bottom: 20px solid black;
+        transform: rotateX(0deg);
+    }
+}
+
+@keyframes ArrowDown {
+    0% {
+        border-bottom: 20px solid black;
+        transform: rotateX(0deg);
+    }
+    100% {
+        border-bottom: 20px solid black;
+        transform: rotateX(180deg);
+    }
+}
