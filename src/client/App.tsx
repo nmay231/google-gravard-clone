@@ -9,13 +9,13 @@ const columnHeaders: Array<[string, number, IAPIQuery['sortBy'] | null]> = [
     ['Born', 1, 'born'],
     ['Died', 1, 'died'],
     ['Description', 7, null],
-    ['Type', 1, 'category'],
+    ['Category', 1, 'category'],
 ]
 
 export interface IAPIQuery {
     search: string
-    born: string // born: 'FROM_DATE:TO_DATE'
-    died: string // died: 'FROM_DATE:TO_DATE'
+    born: string // born: '2010-01-01:2015-12-31'
+    died: string // died: '2010-01-01:2015-12-31'
     sortBy: 'born' | 'died' | 'name' | 'category'
     category: Killed['type'] | ''
 }
@@ -58,13 +58,7 @@ const App = () => {
         <div className="container">
             <div className="row mt-5">
                 <SearchTermsContainer
-                    query={[
-                        APIQuery,
-                        (val) => {
-                            console.log(val)
-                            setAPIQuery(val)
-                        },
-                    ]}
+                    query={[APIQuery, (val) => setAPIQuery(val)]}
                 />
             </div>
             <div className="row mt-4">

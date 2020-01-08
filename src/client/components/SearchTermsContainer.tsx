@@ -1,6 +1,7 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 
 import { IAPIQuery } from '../App'
+import SearchTermItem from './SearchTermItem'
 
 type IX = Pick<IAPIQuery, 'born' | 'search' | 'died' | 'category'>
 
@@ -11,9 +12,14 @@ interface ISearchTermsContainerProps {
 const SearchTermsContainer: React.FC<ISearchTermsContainerProps> = ({
     query: [x, setX],
 }) => {
-    const [whichSelected, setWhichSelected] = useState<keyof IX>('category')
+    const [whichSelected, setWhichSelected] = useState<keyof IX>('search')
     const [search, setSearch] = useState('')
     const [isDateBefore, setisDateBefore] = useState(false)
+
+    type TSearchTerm = { displayText: string; addTermTo: (val: IX) => IX }
+    const [searchTerms, setSearchTerms] = useState<Record<string, TSearchTerm>>(
+        {}
+    )
 
     const handleWhichSelected: React.ChangeEventHandler<HTMLSelectElement> = (
         e
@@ -38,19 +44,70 @@ const SearchTermsContainer: React.FC<ISearchTermsContainerProps> = ({
         e.preventDefault()
 
         if (whichSelected === 'search') {
-            setX({ ...x, search: [...x.search.split(' '), search].join(' ') })
+            setSearchTerms({
+                ...searchTerms,
+                [`search-${search}`]: {
+                    displayText: `Keyword: ${search}`,
+                    addTermTo: (x) => ({
+                        ...x,
+                        search: [...x.search.split(' '), search].join(' '),
+                    }),
+                },
+            })
         } else if (whichSelected === 'born') {
-            const [after, before] = x.born.split(':')
-            if (isDateBefore) setX({ ...x, born: `${after}:${search}` })
-            if (!isDateBefore) setX({ ...x, born: `${search}:${before}` })
+            setSearchTerms({
+                ...searchTerms,
+                [`born-${isDateBefore}`]: {
+                    displayText: `Born ${isDateBefore ? 'before' : 'after'}:
+            ${search}`,
+                    addTermTo: (x) => {
+                        const [after, before] = x.born.split(':')
+                        if (isDateBefore) {
+                            return { ...x, born: `${after}:${search}` }
+                        } else {
+                            return { ...x, born: `${search}:${before}` }
+                        }
+                    },
+                },
+            })
         } else if (whichSelected === 'died') {
-            const [after, before] = x.died.split(':')
-            if (isDateBefore) setX({ ...x, died: `${search}:${before}` })
-            if (!isDateBefore) setX({ ...x, died: `${after}:${search}` })
+            setSearchTerms({
+                ...searchTerms,
+                [`died-${isDateBefore}`]: {
+                    displayText: `Died ${isDateBefore ? 'before' : 'after'}:
+                ${search}`,
+                    addTermTo: (x) => {
+                        const [after, before] = x.died.split(':')
+                        if (isDateBefore) {
+                            return { ...x, died: `${after}:${search}` }
+                        } else {
+                            return { ...x, died: `${search}:${before}` }
+                        }
+                    },
+                },
+            })
         } else {
-            setX({ ...x, category: search as IX['category'] })
+            setSearchTerms({
+                ...searchTerms,
+                category: {
+                    displayText: `Category: ${search}`,
+                    addTermTo: (x) => ({
+                        ...x,
+                        category: search as IX['category'],
+                    }),
+                },
+            })
         }
     }
+
+    useEffect(() => {
+        setX(
+            Object.values(searchTerms).reduce(
+                (updated, searchTerm) => searchTerm.addTermTo(updated),
+                { search: '', born: ':', died: ':', category: '' }
+            )
+        )
+    }, [searchTerms])
 
     const addSearchTermButton = (
         <button
@@ -60,10 +117,25 @@ const SearchTermsContainer: React.FC<ISearchTermsContainerProps> = ({
             add!
         </button>
     )
+    const SearchTermsList = (
+        <ul className="row mt-3">
+            {Object.entries(searchTerms).map(([term, { displayText }]) => {
+                const { [term]: removedTerm, ...newSearchTerms } = searchTerms
+                return (
+                    <SearchTermItem
+                        key={displayText}
+                        displayText={displayText}
+                        remove={() => {
+                            setSearchTerms(newSearchTerms)
+                        }}
+                    />
+                )
+            })}
+        </ul>
+    )
 
     const handleSelection: React.ChangeEventHandler<HTMLSelectElement &
         HTMLInputElement> = (e) => {
-        console.log(e.target.value)
         setSearch(e.target.value)
     }
 
@@ -76,70 +148,82 @@ const SearchTermsContainer: React.FC<ISearchTermsContainerProps> = ({
     switch (whichSelected) {
         case 'search':
             return (
-                <form className="form-inline">
-                    {optionGroup}
-                    <input
-                        onChange={handleSelection}
-                        type="text"
-                        value={search}
-                        className="form-control mx-3"
-                    />
-                    {addSearchTermButton}
-                </form>
+                <div className="col-12">
+                    <form className="form-inline">
+                        {optionGroup}
+                        <input
+                            onChange={handleSelection}
+                            type="text"
+                            value={search}
+                            className="form-control mx-3"
+                        />
+                        {addSearchTermButton}
+                    </form>
+                    {SearchTermsList}
+                </div>
             )
         case 'born':
             return (
-                <form className="form-inline">
-                    {optionGroup}
-                    <button
-                        type="button"
-                        className="btn btn-secondary mx-3"
-                        onClick={toggleBeforeAfterDate}>
-                        {isDateBefore ? 'Before' : 'After'}
-                    </button>
-                    <input
-                        onChange={handleSelection}
-                        type="date"
-                        value={search}
-                        className="form-control mx-3"
-                    />
-                    {addSearchTermButton}
-                </form>
+                <div className="col-12">
+                    <form className="form-inline">
+                        {optionGroup}
+                        <button
+                            type="button"
+                            className="btn btn-secondary mx-3"
+                            onClick={toggleBeforeAfterDate}>
+                            {isDateBefore ? 'Before' : 'After'}
+                        </button>
+                        <input
+                            onChange={handleSelection}
+                            type="month"
+                            value={search}
+                            className="form-control mx-3"
+                        />
+                        {addSearchTermButton}
+                    </form>
+                    {SearchTermsList}
+                </div>
             )
         case 'died':
             return (
-                <form className="form-inline">
-                    {optionGroup}
-                    <button
-                        type="button"
-                        className="btn btn-secondary mx-3"
-                        onClick={toggleBeforeAfterDate}>
-                        {isDateBefore ? 'Before' : 'After'}
-                    </button>
-                    <input
-                        onChange={handleSelection}
-                        type="date"
-                        value={search}
-                        className="form-control mx-3"
-                    />
-                    {addSearchTermButton}
-                </form>
+                <div className="col-12">
+                    <form className="form-inline">
+                        {optionGroup}
+                        <button
+                            type="button"
+                            className="btn btn-secondary mx-3"
+                            onClick={toggleBeforeAfterDate}>
+                            {isDateBefore ? 'Before' : 'After'}
+                        </button>
+                        <input
+                            onChange={handleSelection}
+                            type="date"
+                            value={search}
+                            className="form-control mx-3"
+                        />
+                        {addSearchTermButton}
+                    </form>
+                    {SearchTermsList}
+                </div>
             )
         case 'category':
             if (!search) setSearch('app')
             return (
-                <form className="form-inline">
-                    {optionGroup}
-                    <select
-                        onChange={handleSelection}
-                        value={search}
-                        className="btn btn-secondary mx-3">
-                        <option value="app">Apps</option>
-                        <option value="hardware">Hardware</option>
-                        <option value="service">Services</option>
-                    </select>
-                    {addSearchTermButton}
-                </form>
+                <div className="col-12">
+                    <form className="form-inline">
+                        {optionGroup}
+                        <select
+                            onChange={handleSelection}
+                            value={search}
+                            className="btn btn-secondary mx-3">
+                            <option value="app">Apps</option>
+                            <option value="hardware">Hardware</option>
+                            <option value="service">Services</option>
+                        </select>
+                        {addSearchTermButton}
+                    </form>
+                    {SearchTermsList}
+                </div>
             )
     }
 }

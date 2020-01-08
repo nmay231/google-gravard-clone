@@ -9,6 +9,14 @@ input:invalid {
     border-color: red;
 }
 
+select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    padding: 2px 30px 2px 2px;
+    border: hidden;
+}
+
 .arrow,
 .arrow-up,
 .arrow-down,
