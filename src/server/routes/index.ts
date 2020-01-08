@@ -6,10 +6,13 @@ const router = express.Router()
 
 router.use(express.json())
 
-// I am going to setup an api that is both endpoint based and query based
-
 type sortMethodKey = keyof typeof sortMethods
-const sortMethods = { born: 'dateOpen', died: 'dateClose', name: 'slug' }
+const sortMethods = {
+    born: 'dateOpen',
+    died: 'dateClose',
+    name: 'slug',
+    category: 'type',
+}
 
 router.get('/', async (req, res) => {
     const contains: string[] = req.query.search?.split(' ')

@@ -1,7 +1,12 @@
 @import '~bootstrap';
 
-[type='radio'] {
+[type='radio'],
+option:disabled {
     display: none;
+}
+
+input:invalid {
+    border-color: red;
 }
 
 .arrow,
