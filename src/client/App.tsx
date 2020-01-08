@@ -4,12 +4,12 @@ import DeadProject from './components/DeadProject'
 import Arrow from './components/Arrow'
 import SearchTermsContainer from './components/SearchTermsContainer'
 
-const columnHeaders: Array<[string, number]> = [
-    ['Name', 2],
-    ['Born', 1],
-    ['Died', 1],
-    ['Description', 7],
-    ['Type', 1],
+const columnHeaders: Array<[string, number, IAPIQuery['sortBy'] | null]> = [
+    ['Name', 2, 'name'],
+    ['Born', 1, 'born'],
+    ['Died', 1, 'died'],
+    ['Description', 7, null],
+    ['Type', 1, 'category'],
 ]
 
 export interface IAPIQuery {
@@ -24,7 +24,6 @@ const App = () => {
     const [killed, setKilled] = useState<Killed[]>([])
     const [isUp, setIsUp] = useState(true)
     const [selected, setSelected] = useState(0)
-    const [sortBy, setSortBy] = useState<IAPIQuery['sortBy']>('name')
     const [APIQuery, setAPIQuery] = useState<
         Pick<IAPIQuery, 'born' | 'search' | 'died' | 'category'>
     >({
@@ -36,12 +35,15 @@ const App = () => {
 
     useEffect(() => {
         ;(async () => {
-            const querys = Object.entries({ ...APIQuery, sortBy })
+            const querys = Object.entries({
+                ...APIQuery,
+                sortBy: (isUp ? '' : '-') + columnHeaders[selected][2],
+            })
                 .map((q) => `${q[0]}=${encodeURIComponent(q[1])}`)
                 .join('&')
             setKilled(await fetch(`/api?${querys}`).then((r) => r.json()))
         })()
-    }, [APIQuery])
+    }, [APIQuery, selected, isUp])
 
     const handleSetSelected = (newSelected: number) => () => {
         if (selected === newSelected) {
@@ -72,13 +74,16 @@ const App = () => {
                             htmlFor={'column-' + i}
                             className={
                                 'p-2 d-inline-flex btn btn-secondary mr-auto' +
-                                (selected === i ? ' active' : '')
+                                (selected === i ? ' active' : '') +
+                                (i === 3 ? ' disabled' : '')
                             }>
                             <input
                                 type="radio"
                                 id={'column-' + i}
                                 name="headers"
-                                onClick={handleSetSelected(i)}
+                                onClick={
+                                    i !== 3 ? handleSetSelected(i) : () => {}
+                                }
                             />
                             {name[0]}
                             <Arrow enabled={selected === i} pointUp={isUp} />
