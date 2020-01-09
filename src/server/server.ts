@@ -4,6 +4,7 @@ import * as helmet from 'helmet'
 import * as compression from 'compression'
 
 import apiRouter from './routes'
+import './utils/cronJob'
 
 const app = express()
 

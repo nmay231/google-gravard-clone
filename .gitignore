@@ -3,3 +3,4 @@ dist/
 public/js/app.js
 config/.env
 *error.log
+graveyard.sqlite
